@@ -1,8 +1,8 @@
 // store
 import { store } from './store';
 
-// validate
-import { isOutOfStock } from './utils/validate';
+// utils
+import { isOutOfStock, findProductById, hasCartProductById } from './utils';
 
 // services
 import { firstAddCart, addCart, removeCart } from './services/product';
@@ -193,23 +193,6 @@ const renderBonusPts = () => {
 // }
 
 main();
-
-// 1. 카트에 추가되는 함수 만들기
-// 2. 카트 컴포넌트에 추가된 상품 반복하기
-function findProductById(targetId) {
-  const { products } = store.getState();
-  return products.find((product) => product.id === targetId);
-}
-
-function findCartProductById(targetId) {
-  const { cartProducts } = store.getState();
-  return cartProducts.find((product) => product.id === targetId);
-}
-
-function hasCartProductById(targetId) {
-  const { cartProducts } = store.getState();
-  return cartProducts.some((product) => product.id === targetId);
-}
 
 function handleAddCart() {
   const { selectedProductId } = store.getState();
