@@ -1,3 +1,17 @@
+// lib
+import { createObserver } from './lib';
+
+// components
+import {
+  AddToCartButton,
+  CartContainer,
+  CartHeader,
+  CartProductList,
+  CartTotal,
+  ProductSelector,
+  StockStatus,
+} from './components';
+
 const products = [
   { id: 'p1', name: '상품1', val: 10000, q: 50 },
   { id: 'p2', name: '상품2', val: 20000, q: 30 },
@@ -12,83 +26,43 @@ var lastSel,
   totalAmt = 0,
   itemCnt = 0;
 
-function createObserver() {
-  const listeners = new Set();
-  const subscribe = (fn) => listeners.add(fn);
-  const notify = () => listeners.forEach((listener) => listener());
-
-  return { subscribe, notify };
-}
-
-function CartHeader({ text }) {
-  return /* HTML */ `<h1 class="text-2xl font-bold mb-4">${text}</h1>`;
-}
-
-function CartProductList() {
-  return /* HTML */ `<div id="Cart-items"></div>`;
-}
-
-function CartTotal() {
-  return /* HTML */ `
-    <div id="Cart-total" class="text-xl font-bold my-4"></div>
-  `;
-}
-
-function ProductSelector() {
-  return /* HTML */ `
-    <select id="product-select" class="border rounded p-2 mr-2"></select>
-  `;
-}
-
-function AddToCartButton({ text }) {
-  return /* HTML */ `
-    <button id="add-to-Cart" class="bg-blue-500 text-white px-4 py-2 rounded">
-      ${text}
-    </button>
-  `;
-}
-
-function StockStatus({ text }) {
-  return /* HTML */ `
-    <div id="stock-status" class="text-sm text-gray-500 mt-2">${text}</div>
-  `;
-}
-
-function CartWrapper({ children }) {
-  return /* HTML */ `
-    <div
-      class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8"
-    >
-      ${children}
-    </div>
-  `;
-}
-
-function render() {
-  const $root = document.getElementById('app');
-  $root.innerHTML = CartWrapper({
-    children: /* HTML */ `
-      <div class="bg-gray-100 p-8">
-        ${[
-          CartHeader({ text: '장바구니' }),
-          CartProductList(),
-          CartTotal(),
-          ProductSelector(),
-          AddToCartButton({ text: '추가' }),
-          StockStatus({ text: '임시' }),
-        ].join('\n')}
-      </div>
-    `,
-  });
-}
-
 /**
  * 분석
  * - 전체 UI를 최초 생성함
  * - 30초와 1분 마다 alert 발생과 함께 셀렉트 박스의 옵션이 변경됨
  */
 function main() {
-  render();
+  function render() {
+    const $root = document.getElementById('app');
+    $root.innerHTML = CartContainer({
+      children: /* HTML */ `
+        <div
+          class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8"
+        >
+          ${[
+            CartHeader({ text: '장바구니' }),
+            CartProductList(),
+            CartTotal(),
+            ProductSelector(),
+            AddToCartButton({ text: '추가' }),
+            StockStatus({ text: '임시' }),
+          ].join('\n')}
+        </div>
+      `,
+    });
+  }
+
+  function handleClick(event) {
+    console.log(event);
+  }
+
+  function init() {
+    render();
+    document.body.addEventListener('click', handleClick);
+  }
+
+  init();
+
   // updateSelOpts();
   calcCart();
   // setTimeout(function () {
