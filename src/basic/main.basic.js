@@ -48,7 +48,15 @@ function main() {
     const elementId = event.target.id;
 
     if (elementId === 'add-to-cart') {
-      addToCart();
+      handleAddCart();
+    }
+  }
+
+  function handleChange(event) {
+    const elementId = event.target.id;
+
+    if (elementId === 'product-select') {
+      handleSelectProduct(event.target.value);
     }
   }
 
@@ -56,6 +64,7 @@ function main() {
     store.subscribe(render);
 
     document.body.addEventListener('click', handleClick);
+    document.body.addEventListener('change', handleChange);
 
     render();
   }
@@ -181,8 +190,76 @@ main();
 
 // 1. 카트에 추가되는 함수 만들기
 // 2. 카트 컴포넌트에 추가된 상품 반복하기
-function addToCart() {
-  console.log('add to cart');
+function findProductById(targetId) {
+  const { products } = store.getState();
+  return products.find((product) => product.id === targetId);
+}
+
+function findCartProductById(targetId) {
+  const { cartProducts } = store.getState();
+  return cartProducts.find((product) => product.id === targetId);
+}
+
+function hasCartProductById(targetId) {
+  const { cartProducts } = store.getState();
+  return cartProducts.some((product) => product.id === targetId);
+}
+
+function isOutOfStock(product) {
+  return product.q > 0;
+}
+
+function handleAddCart() {
+  const { selectedProductId, products, cartProducts } = store.getState();
+
+  const selectedProduct = findProductById(selectedProductId);
+
+  if (!isOutOfStock(selectedProduct)) {
+    alert('재고가 부족합니다.');
+    return;
+  }
+
+  if (!hasCartProductById(selectedProductId)) {
+    const newProducts = products.map((product) => {
+      if (product.id === selectedProductId) {
+        return { ...product, q: --product.q };
+      }
+
+      return product;
+    });
+
+    store.setState({
+      products: newProducts,
+      cartProducts: [...cartProducts, { ...selectedProduct, q: 1 }],
+    });
+    return;
+  }
+
+  const newProducts = products.map((product) => {
+    if (product.id === selectedProductId) {
+      return { ...product, q: --product.q };
+    }
+
+    return product;
+  });
+
+  const newCartProducts = cartProducts.map((product) => {
+    if (product.id === selectedProductId) {
+      return { ...product, q: ++product.q };
+    }
+
+    return product;
+  });
+
+  store.setState({
+    products: newProducts,
+    cartProducts: newCartProducts,
+  });
+}
+
+function handleSelectProduct(targetId) {
+  const selected = findProductById(targetId);
+  store.setState({ selectedProductId: selected.id });
 }
 
 addBtn.addEventListener('click', function () {

@@ -20,7 +20,7 @@ export default function StockStatus() {
   const stockMessage = products
     .filter(isLowStock)
     .map(getStockMessage)
-    .join('\n');
+    .join(' ');
 
   return /* HTML */ `
     <div id="stock-status" class="text-sm text-gray-500 mt-2">

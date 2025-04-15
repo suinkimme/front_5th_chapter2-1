@@ -1,6 +1,7 @@
 import { createStore } from '../lib';
 
 export const store = createStore({
+  selectedProductId: 'p1',
   products: [
     { id: 'p1', name: '상품1', val: 10000, q: 50 },
     { id: 'p2', name: '상품2', val: 20000, q: 30 },
