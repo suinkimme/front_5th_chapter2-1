@@ -4,6 +4,9 @@ import { store } from './store';
 // validate
 import { isOutOfStock } from './utils/validate';
 
+// services
+import { firstAddCart, addCart, removeCart } from './services/product';
+
 // components
 import {
   AddToCartButton,
@@ -209,7 +212,7 @@ function hasCartProductById(targetId) {
 }
 
 function handleAddCart() {
-  const { selectedProductId, products, cartProducts } = store.getState();
+  const { selectedProductId } = store.getState();
 
   const selectedProduct = findProductById(selectedProductId);
 
@@ -219,41 +222,11 @@ function handleAddCart() {
   }
 
   if (!hasCartProductById(selectedProductId)) {
-    const newProducts = products.map((product) => {
-      if (product.id === selectedProductId) {
-        return { ...product, q: --product.q };
-      }
-
-      return product;
-    });
-
-    store.setState({
-      products: newProducts,
-      cartProducts: [...cartProducts, { ...selectedProduct, q: 1 }],
-    });
+    firstAddCart(selectedProductId);
     return;
   }
 
-  const newProducts = products.map((product) => {
-    if (product.id === selectedProductId) {
-      return { ...product, q: --product.q };
-    }
-
-    return product;
-  });
-
-  const newCartProducts = cartProducts.map((product) => {
-    if (product.id === selectedProductId) {
-      return { ...product, q: ++product.q };
-    }
-
-    return product;
-  });
-
-  store.setState({
-    products: newProducts,
-    cartProducts: newCartProducts,
-  });
+  addCart(selectedProductId);
 }
 
 function handleSelectProduct(targetId) {
