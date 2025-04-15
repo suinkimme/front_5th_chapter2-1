@@ -45,7 +45,11 @@ function main() {
   }
 
   function handleClick(event) {
-    console.log(event);
+    const elementId = event.target.id;
+
+    if (elementId === 'add-to-cart') {
+      addToCart();
+    }
   }
 
   function init() {
@@ -174,6 +178,12 @@ const renderBonusPts = () => {
 // }
 
 main();
+
+// 1. 카트에 추가되는 함수 만들기
+// 2. 카트 컴포넌트에 추가된 상품 반복하기
+function addToCart() {
+  console.log('add to cart');
+}
 
 addBtn.addEventListener('click', function () {
   // 선택되어 있는 셀렉트 박스 옵션과 products와 비교해서 같은 상품 찾아서 카트에 추가하려는 용도 같음
