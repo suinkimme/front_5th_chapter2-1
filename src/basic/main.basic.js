@@ -49,7 +49,7 @@ function main() {
   }
 
   function init() {
-    render();
+    store.subscribe(render);
     document.body.addEventListener('click', handleClick);
   }
 
