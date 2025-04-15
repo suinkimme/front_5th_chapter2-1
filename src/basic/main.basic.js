@@ -1,6 +1,9 @@
 // lib
 import { createObserver } from './lib';
 
+// store
+import { store } from './store';
+
 // components
 import {
   AddToCartButton,
@@ -11,14 +14,6 @@ import {
   ProductSelector,
   StockStatus,
 } from './components';
-
-const products = [
-  { id: 'p1', name: '상품1', val: 10000, q: 50 },
-  { id: 'p2', name: '상품2', val: 20000, q: 30 },
-  { id: 'p3', name: '상품3', val: 30000, q: 20 },
-  { id: 'p4', name: '상품4', val: 15000, q: 0 },
-  { id: 'p5', name: '상품5', val: 25000, q: 10 },
-];
 
 var sel, addBtn, cartDisp, sum, stockInfo;
 var lastSel,
@@ -58,6 +53,7 @@ function main() {
 
   function init() {
     render();
+    updateSelOpts();
     document.body.addEventListener('click', handleClick);
   }
 
@@ -97,14 +93,16 @@ function main() {
  * 분석 - 셀렉트 박스의 옵션을 products의 값에 따라 수정하는 함수로 보임
  */
 function updateSelOpts() {
-  sel.innerHTML = '';
-  products.forEach(function (item) {
-    var opt = document.createElement('option');
-    opt.value = item.id;
-    opt.textContent = item.name + ' - ' + item.val + '원';
-    if (item.q === 0) opt.disabled = true;
-    sel.appendChild(opt);
-  });
+  const { products } = store.getState();
+  console.log(products);
+  // sel.innerHTML = '';
+  // products.forEach(function (item) {
+  //   var opt = document.createElement('option');
+  //   opt.value = item.id;
+  //   opt.textContent = item.name + ' - ' + item.val + '원';
+  //   if (item.q === 0) opt.disabled = true;
+  //   sel.appendChild(opt);
+  // });
 }
 
 function calcCart() {
