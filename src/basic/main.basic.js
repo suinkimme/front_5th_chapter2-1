@@ -12,6 +12,14 @@ var lastSel,
   totalAmt = 0,
   itemCnt = 0;
 
+function createObserver() {
+  const listeners = new Set();
+  const subscribe = (fn) => listeners.add(fn);
+  const notify = () => listeners.forEach((listener) => listener());
+
+  return { subscribe, notify };
+}
+
 function CartHeader({ text }) {
   return /* HTML */ `<h1 class="text-2xl font-bold mb-4">${text}</h1>`;
 }
