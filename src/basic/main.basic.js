@@ -4,6 +4,11 @@ var lastSel,
   totalAmt = 0,
   itemCnt = 0;
 
+/**
+ * 분석
+ * - 전체 UI를 최초 생성함
+ * - 30초와 1분 마다 alert 발생과 함께 셀렉트 박스의 옵션이 변경됨
+ */
 function main() {
   prodList = [
     { id: 'p1', name: '상품1', val: 10000, q: 50 },
@@ -84,6 +89,9 @@ function main() {
   }, Math.random() * 20000);
 }
 
+/**
+ * 분석 - 셀렉트 박스의 옵션을 prodList의 값에 따라 수정하는 함수로 보임
+ */
 function updateSelOpts() {
   sel.innerHTML = '';
   prodList.forEach(function (item) {
