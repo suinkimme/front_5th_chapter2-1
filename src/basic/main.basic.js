@@ -37,7 +37,7 @@ function main() {
             CartTotal(),
             ProductSelector(),
             AddToCartButton({ text: '추가' }),
-            StockStatus({ text: '임시' }),
+            StockStatus(),
           ].join('\n')}
         </div>
       `,
