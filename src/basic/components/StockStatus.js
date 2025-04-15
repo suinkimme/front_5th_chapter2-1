@@ -12,7 +12,7 @@ function getStockMessage(product) {
   return `${product.name}: 품절`;
 }
 
-export default function StockStatus({ text }) {
+export default function StockStatus() {
   const { products } = store.getState();
   const stockMessage = products
     .filter(isLowStock)
