@@ -1,8 +1,78 @@
-var products, sel, addBtn, cartDisp, sum, stockInfo;
+const products = [
+  { id: 'p1', name: '상품1', val: 10000, q: 50 },
+  { id: 'p2', name: '상품2', val: 20000, q: 30 },
+  { id: 'p3', name: '상품3', val: 30000, q: 20 },
+  { id: 'p4', name: '상품4', val: 15000, q: 0 },
+  { id: 'p5', name: '상품5', val: 25000, q: 10 },
+];
+
+var sel, addBtn, cartDisp, sum, stockInfo;
 var lastSel,
   bonusPts = 0,
   totalAmt = 0,
   itemCnt = 0;
+
+function CartHeader({ text }) {
+  return /* HTML */ `<h1 class="text-2xl font-bold mb-4">${text}</h1>`;
+}
+
+function CartProductList() {
+  return /* HTML */ `<div id="Cart-items"></div>`;
+}
+
+function CartTotal() {
+  return /* HTML */ `
+    <div id="Cart-total" class="text-xl font-bold my-4"></div>
+  `;
+}
+
+function ProductSelector() {
+  return /* HTML */ `
+    <select id="product-select" class="border rounded p-2 mr-2"></select>
+  `;
+}
+
+function AddToCartButton({ text }) {
+  return /* HTML */ `
+    <button id="add-to-Cart" class="bg-blue-500 text-white px-4 py-2 rounded">
+      ${text}
+    </button>
+  `;
+}
+
+function StockStatus({ text }) {
+  return /* HTML */ `
+    <div id="stock-status" class="text-sm text-gray-500 mt-2">${text}</div>
+  `;
+}
+
+function CartWrapper({ children }) {
+  return /* HTML */ `
+    <div
+      class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8"
+    >
+      ${children}
+    </div>
+  `;
+}
+
+function render() {
+  const $root = document.getElementById('app');
+  $root.innerHTML = CartWrapper({
+    children: /* HTML */ `
+      <div class="bg-gray-100 p-8">
+        ${[
+          CartHeader({ text: '장바구니' }),
+          CartProductList(),
+          CartTotal(),
+          ProductSelector(),
+          AddToCartButton({ text: '추가' }),
+          StockStatus({ text: '임시' }),
+        ].join('\n')}
+      </div>
+    `,
+  });
+}
 
 /**
  * 분석
@@ -10,56 +80,8 @@ var lastSel,
  * - 30초와 1분 마다 alert 발생과 함께 셀렉트 박스의 옵션이 변경됨
  */
 function main() {
-  products = [
-    { id: 'p1', name: '상품1', val: 10000, q: 50 },
-    { id: 'p2', name: '상품2', val: 20000, q: 30 },
-    { id: 'p3', name: '상품3', val: 30000, q: 20 },
-    { id: 'p4', name: '상품4', val: 15000, q: 0 },
-    { id: 'p5', name: '상품5', val: 25000, q: 10 },
-  ];
-  var root = document.getElementById('app');
-
-  let cont = document.createElement('div');
-  cont.className = 'bg-gray-100 p-8';
-  cont.appendChild(wrap);
-
-  let hTxt = document.createElement('h1');
-  hTxt.className = 'text-2xl font-bold mb-4';
-  hTxt.textContent = '장바구니';
-
-  cartDisp = document.createElement('div');
-  cartDisp.id = 'cart-items';
-
-  sum = document.createElement('div');
-  sum.id = 'cart-total';
-  sum.className = 'text-xl font-bold my-4';
-
-  sel = document.createElement('select');
-  sel.id = 'product-select';
-  sel.className = 'border rounded p-2 mr-2';
-
-  addBtn = document.createElement('button');
-  addBtn.id = 'add-to-cart';
-  addBtn.className = 'bg-blue-500 text-white px-4 py-2 rounded';
-  addBtn.textContent = '추가';
-
-  stockInfo = document.createElement('div');
-  stockInfo.id = 'stock-status';
-  stockInfo.className = 'text-sm text-gray-500 mt-2';
-
-  var wrap = document.createElement('div');
-  wrap.className =
-    'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
-  wrap.appendChild(hTxt);
-  wrap.appendChild(cartDisp);
-  wrap.appendChild(sum);
-  wrap.appendChild(sel);
-  wrap.appendChild(addBtn);
-  wrap.appendChild(stockInfo);
-
-  updateSelOpts();
-
-  root.appendChild(cont);
+  render();
+  // updateSelOpts();
   calcCart();
   // setTimeout(function () {
   //   setInterval(function () {
