@@ -1,6 +1,3 @@
-// lib
-import { createObserver } from './lib';
-
 // store
 import { store } from './store';
 
@@ -53,7 +50,6 @@ function main() {
 
   function init() {
     render();
-    updateSelOpts();
     document.body.addEventListener('click', handleClick);
   }
 
@@ -144,7 +140,7 @@ function calcCart() {
     span.textContent = '(' + (discRate * 100).toFixed(1) + '% 할인 적용)';
     sum.appendChild(span);
   }
-  updateStockInfo();
+  // updateStockInfo();
   renderBonusPts();
 }
 
@@ -160,19 +156,19 @@ const renderBonusPts = () => {
   ptsTag.textContent = '(포인트: ' + bonusPts + ')';
 };
 
-function updateStockInfo() {
-  var infoMsg = '';
-  products.forEach(function (item) {
-    if (item.q < 5) {
-      infoMsg +=
-        item.name +
-        ': ' +
-        (item.q > 0 ? '재고 부족 (' + item.q + '개 남음)' : '품절') +
-        '\n';
-    }
-  });
-  stockInfo.textContent = infoMsg;
-}
+// function updateStockInfo() {
+//   var infoMsg = '';
+//   products.forEach(function (item) {
+//     if (item.q < 5) {
+//       infoMsg +=
+//         item.name +
+//         ': ' +
+//         (item.q > 0 ? '재고 부족 (' + item.q + '개 남음)' : '품절') +
+//         '\n';
+//     }
+//   });
+//   stockInfo.textContent = infoMsg;
+// }
 
 main();
 
