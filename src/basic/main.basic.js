@@ -50,7 +50,10 @@ function main() {
 
   function init() {
     store.subscribe(render);
+
     document.body.addEventListener('click', handleClick);
+
+    render();
   }
 
   init();
