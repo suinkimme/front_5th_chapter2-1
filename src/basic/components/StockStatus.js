@@ -1,14 +1,11 @@
+// store
 import { store } from '../store';
 
-const LOW_STOCK_THRESHOLD = 5;
-const OUT_OF_STOCK_THRESHOLD = 0;
-
-function isLowStock(product) {
-  return product.q < LOW_STOCK_THRESHOLD;
-}
+// validate
+import { isOutOfStock, isLowStock } from '../utils/validate';
 
 function getStockMessage(product) {
-  if (product.q > OUT_OF_STOCK_THRESHOLD) {
+  if (isOutOfStock(product)) {
     return `${product.name}: 재고 부족 (${product.q}개 남음)`;
   }
 

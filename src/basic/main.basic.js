@@ -1,6 +1,9 @@
 // store
 import { store } from './store';
 
+// validate
+import { isOutOfStock } from './utils/validate';
+
 // components
 import {
   AddToCartButton,
@@ -203,10 +206,6 @@ function findCartProductById(targetId) {
 function hasCartProductById(targetId) {
   const { cartProducts } = store.getState();
   return cartProducts.some((product) => product.id === targetId);
-}
-
-function isOutOfStock(product) {
-  return product.q > 0;
 }
 
 function handleAddCart() {
