@@ -61,7 +61,7 @@ function main() {
     }
 
     if (!hasCartProductById(selectedProductId)) {
-      firstAddCart(selectedProductId);
+      firstAddCart(selectedProduct);
       return;
     }
 

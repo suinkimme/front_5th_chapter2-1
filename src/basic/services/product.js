@@ -20,10 +20,10 @@ function increaseCartQuantity(products, id) {
   });
 }
 
-export function firstAddCart(selectedProductId) {
+export function firstAddCart(selectedProduct) {
   const { products, cartProducts } = store.getState();
 
-  const newProducts = decreaseProductStock(products, selectedProductId);
+  const newProducts = decreaseProductStock(products, selectedProduct.id);
 
   store.setState({
     products: newProducts,

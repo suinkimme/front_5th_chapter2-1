@@ -1,7 +1,7 @@
 import { store } from '../store';
 
 export default function ProductSelector() {
-  const { products, selectedProduct } = store.getState();
+  const { products, selectedProductId } = store.getState();
 
   return /* HTML */ `
     <select id="product-select" class="border rounded p-2 mr-2">
@@ -12,7 +12,7 @@ export default function ProductSelector() {
             <option
               value="${id}"
               ${!q && 'disabled'}
-              ${id === selectedProduct && 'selected'}
+              ${id === selectedProductId && 'selected'}
             >
               ${name} - ${val}원
             </option>
