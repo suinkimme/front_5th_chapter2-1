@@ -1,4 +1,4 @@
-var prodList, sel, addBtn, cartDisp, sum, stockInfo;
+var products, sel, addBtn, cartDisp, sum, stockInfo;
 var lastSel,
   bonusPts = 0,
   totalAmt = 0,
@@ -10,7 +10,7 @@ var lastSel,
  * - 30초와 1분 마다 alert 발생과 함께 셀렉트 박스의 옵션이 변경됨
  */
 function main() {
-  prodList = [
+  products = [
     { id: 'p1', name: '상품1', val: 10000, q: 50 },
     { id: 'p2', name: '상품2', val: 20000, q: 30 },
     { id: 'p3', name: '상품3', val: 30000, q: 20 },
@@ -63,7 +63,7 @@ function main() {
   calcCart();
   setTimeout(function () {
     setInterval(function () {
-      var luckyItem = prodList[Math.floor(Math.random() * prodList.length)];
+      var luckyItem = products[Math.floor(Math.random() * products.length)];
       if (Math.random() < 0.3 && luckyItem.q > 0) {
         luckyItem.val = Math.round(luckyItem.val * 0.8);
         alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
@@ -74,7 +74,7 @@ function main() {
   setTimeout(function () {
     setInterval(function () {
       if (lastSel) {
-        var suggest = prodList.find(function (item) {
+        var suggest = products.find(function (item) {
           return item.id !== lastSel && item.q > 0;
         });
         if (suggest) {
@@ -90,11 +90,11 @@ function main() {
 }
 
 /**
- * 분석 - 셀렉트 박스의 옵션을 prodList의 값에 따라 수정하는 함수로 보임
+ * 분석 - 셀렉트 박스의 옵션을 products의 값에 따라 수정하는 함수로 보임
  */
 function updateSelOpts() {
   sel.innerHTML = '';
-  prodList.forEach(function (item) {
+  products.forEach(function (item) {
     var opt = document.createElement('option');
     opt.value = item.id;
     opt.textContent = item.name + ' - ' + item.val + '원';
@@ -111,9 +111,9 @@ function calcCart() {
   for (var i = 0; i < cartItems.length; i++) {
     (function () {
       var curItem;
-      for (var j = 0; j < prodList.length; j++) {
-        if (prodList[j].id === cartItems[i].id) {
-          curItem = prodList[j];
+      for (var j = 0; j < products.length; j++) {
+        if (products[j].id === cartItems[i].id) {
+          curItem = products[j];
           break;
         }
       }
@@ -176,7 +176,7 @@ const renderBonusPts = () => {
 
 function updateStockInfo() {
   var infoMsg = '';
-  prodList.forEach(function (item) {
+  products.forEach(function (item) {
     if (item.q < 5) {
       infoMsg +=
         item.name +
@@ -192,7 +192,7 @@ main();
 
 addBtn.addEventListener('click', function () {
   var selItem = sel.value;
-  var itemToAdd = prodList.find(function (p) {
+  var itemToAdd = products.find(function (p) {
     return p.id === selItem;
   });
   if (itemToAdd && itemToAdd.q > 0) {
@@ -242,7 +242,7 @@ cartDisp.addEventListener('click', function (event) {
   ) {
     var prodId = tgt.dataset.productId;
     var itemElem = document.getElementById(prodId);
-    var prod = prodList.find(function (p) {
+    var prod = products.find(function (p) {
       return p.id === prodId;
     });
     if (tgt.classList.contains('quantity-change')) {
