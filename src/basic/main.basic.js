@@ -89,21 +89,6 @@ function main() {
   // }, Math.random() * 20000);
 }
 
-/**
- * 분석 - 셀렉트 박스의 옵션을 products의 값에 따라 수정하는 함수로 보임
- */
-function updateSelOpts() {
-  const { products } = store.getState();
-  // sel.innerHTML = '';
-  // products.forEach(function (item) {
-  //   var opt = document.createElement('option');
-  //   opt.value = item.id;
-  //   opt.textContent = item.name + ' - ' + item.val + '원';
-  //   if (item.q === 0) opt.disabled = true;
-  //   sel.appendChild(opt);
-  // });
-}
-
 function calcCart() {
   totalAmt = 0;
   itemCnt = 0;
