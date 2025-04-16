@@ -19,12 +19,12 @@ function main() {
     { id: 'p5', name: '상품5', val: 25000, q: 10 },
   ];
 
-  var $root = document.getElementById('app');
+  const $root = document.getElementById('app');
 
-  let $container = document.createElement('div');
+  const $container = document.createElement('div');
   $container.className = 'bg-gray-100 p-8';
 
-  var $wrapper = document.createElement('div');
+  const $wrapper = document.createElement('div');
   $wrapper.className =
     'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
 
