@@ -1,6 +1,6 @@
 export default function CartProductItem({ id, name, val, q }) {
   return /* HTML */ `
-    <div class="flex justify-between items-center mb-2">
+    <div id="${id}" class="flex justify-between items-center mb-2">
       <span>${name} - ${val}원 x ${q}</span>
       <div>
         <button

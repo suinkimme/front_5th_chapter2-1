@@ -1,9 +1,7 @@
-import { store } from '../store';
+import { calculateCartTotal } from '../services/product';
 
 export default function LoyaltyPoint() {
-  const { cartProducts } = store.getState();
+  const { total } = calculateCartTotal();
 
-  return /* HTML */ `
-    <span id="loyalty-points" class="text-blue-500 ml-2">(포인트: )</span>
-  `;
+  return `<span id="loyalty-points" class="text-blue-500 ml-2">(포인트: ${Math.floor(total / 1000)})</span>`;
 }

@@ -8,14 +8,12 @@ export default function ProductSelector() {
       ${products
         .map((product) => {
           const { id, q, name, val } = product;
-          return /* HTML */ `
+          return `
             <option
               value="${id}"
-              ${!q && 'disabled'}
-              ${id === selectedProductId && 'selected'}
-            >
-              ${name} - ${val}원
-            </option>
+              ${!q ? 'disabled' : ''}
+              ${id === selectedProductId ? 'selected' : ''}
+            >${name} - ${val}원</option>
           `;
         })
         .join('')}

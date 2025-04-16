@@ -8,7 +8,7 @@ export default function CartProductList() {
   const { cartProducts } = store.getState();
 
   return /* HTML */ `
-    <div id="Cart-items">
+    <div id="cart-items">
       ${cartProducts.map((product) => CartProductItem(product)).join('')}
     </div>
   `;
