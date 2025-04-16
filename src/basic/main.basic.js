@@ -215,14 +215,14 @@ addButton.addEventListener('click', function () {
     if (item) {
       var newQuantity =
         parseInt(item.querySelector('span').textContent.split('x ')[1]) + 1;
-      if (newQuantity <= selectedProduct.q) {
+      if (newQuantity <= selectedProduct.quantity) {
         item.querySelector('span').textContent =
           selectedProduct.name +
           ' - ' +
           selectedProduct.price +
           '원 x ' +
           newQuantity;
-        selectedProduct.q--;
+        selectedProduct.quantity--;
       } else {
         alert('재고가 부족합니다.');
       }
