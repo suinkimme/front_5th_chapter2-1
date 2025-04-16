@@ -1,17 +1,16 @@
 // 스토어
 import { store } from './store';
 
-var products,
-  productSelectBox,
+// utils
+import { getDiscountRate, getDiscountTotal } from './utils';
+
+var productSelectBox,
   addButton,
   cartProductList,
   cartTotalText,
   stockInformationText;
 
-var lastSelectedProduct,
-  bonusPoints = 0,
-  totalAmount = 0,
-  cartProductsCount = 0;
+var lastSelectedProduct;
 
 const renderCartProductList = (updatedCartProducts) => {
   const cartProductList = document.getElementById('cart-items');
@@ -83,7 +82,6 @@ function main() {
   $wrapper.appendChild(stockInformationText);
   $container.appendChild($wrapper);
   $root.appendChild($container);
-  calculateCartTotal();
   // setTimeout(function () {
   //   setInterval(function () {
   //     var luckyItem = products[Math.floor(Math.random() * products.length)];
@@ -112,14 +110,19 @@ function main() {
   // }, Math.random() * 20000);
 
   store.subscribe(render);
+
+  render();
 }
 
 const render = () => {
-  const { cartProducts } = store.getState();
+  const { cartProducts, totalAmount, bonusPoints, discountRate } =
+    store.getState();
 
   renderCartProductList(cartProducts);
+  renderTotalAmount(totalAmount);
+  renderBonusPoints(bonusPoints);
+  renderDiscountRate(discountRate);
   renderStockInformationText();
-  renderBonusPoints();
 };
 
 function renderProductSelectOptions() {
@@ -134,64 +137,62 @@ function renderProductSelectOptions() {
   });
 }
 
-function calculateCartTotal() {
-  const { cartProducts } = store.getState();
-  totalAmount = 0;
-  cartProductsCount = 0;
-
-  var subTotal = 0;
+function calculateCartTotal(cartProducts) {
+  let totalQuantity = 0;
+  let totalAmountBeforeDiscount = 0;
+  let totalAmount = 0;
 
   cartProducts.forEach((product) => {
-    subTotal += product.price * product.quantity;
-    cartProductsCount += product.quantity;
+    const quantity = product.quantity;
+    const totalAmountItem = product.price * quantity;
 
-    var discount = 0;
-    if (product.quantity >= 10) {
-      if (product.id === 'p1') discount = 0.1;
-      else if (product.id === 'p2') discount = 0.15;
-      else if (product.id === 'p3') discount = 0.2;
-      else if (product.id === 'p4') discount = 0.05;
-      else if (product.id === 'p5') discount = 0.25;
+    totalQuantity += quantity;
+    totalAmountBeforeDiscount += totalAmountItem;
+
+    if (quantity < 10) {
+      totalAmount += totalAmountItem;
+      return;
     }
 
-    totalAmount += product.price * product.quantity * (1 - discount);
+    totalAmount += totalAmountItem * (1 - getDiscountRate(product.id));
   });
 
-  let discountRate = 0;
+  const { discountRate, discountedPrice } = getDiscountTotal(
+    totalQuantity,
+    totalAmount,
+    totalAmountBeforeDiscount
+  );
 
-  if (cartProductsCount >= 30) {
-    var bulkDiscount = totalAmount * 0.25;
-    var itemDiscount = subTotal - totalAmount;
-    if (bulkDiscount > itemDiscount) {
-      totalAmount = subTotal * (1 - 0.25);
-      discountRate = 0.25;
-    } else {
-      discountRate = (subTotal - totalAmount) / subTotal;
-    }
-  } else {
-    discountRate = (subTotal - totalAmount) / subTotal;
-  }
+  const bonusPoints = Math.floor(discountedPrice / 1000);
 
-  if (new Date().getDay() === 2) {
-    totalAmount *= 1 - 0.1;
-    discountRate = Math.max(discountRate, 0.1);
-  }
-
-  cartTotalText.textContent = '총액: ' + Math.round(totalAmount) + '원';
-  if (discountRate > 0) {
-    var span = document.createElement('span');
-    span.className = 'text-green-500 ml-2';
-    span.textContent = '(' + (discountRate * 100).toFixed(1) + '% 할인 적용)';
-    cartTotalText.appendChild(span);
-  }
-
-  renderStockInformationText();
-  renderBonusPoints();
+  return {
+    totalQuantity,
+    totalAmountBeforeDiscount,
+    totalAmount: discountedPrice,
+    discountRate,
+    bonusPoints,
+  };
 }
 
-const renderBonusPoints = () => {
-  bonusPoints = Math.floor(totalAmount / 1000);
-  var pointsTag = document.getElementById('loyalty-points');
+const renderTotalAmount = (totalAmount) => {
+  const cartTotalText = document.getElementById('cart-total');
+  cartTotalText.textContent = `총액: ${Math.round(totalAmount)}원`;
+};
+
+const renderDiscountRate = (discountRate) => {
+  const cartTotalText = document.getElementById('cart-total');
+
+  if (discountRate > 0) {
+    const discountRateText = document.createElement('span');
+
+    discountRateText.classList.add('text-green-500', 'ml-2');
+    discountRateText.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
+    cartTotalText.appendChild(discountRateText);
+  }
+};
+
+const renderBonusPoints = (bonusPoints) => {
+  let pointsTag = document.getElementById('loyalty-points');
   if (!pointsTag) {
     pointsTag = document.createElement('span');
     pointsTag.id = 'loyalty-points';
@@ -199,29 +200,34 @@ const renderBonusPoints = () => {
     cartTotalText.appendChild(pointsTag);
   }
 
-  pointsTag.textContent = '(포인트: ' + bonusPoints + ')';
+  pointsTag.textContent = `(포인트: ${bonusPoints})`;
 };
 
-function renderStockInformationText() {
+const renderStockInformationText = () => {
   const { products } = store.getState();
+  let informationMessage = '';
 
-  var informationMessage = '';
-  products.forEach(function (item) {
-    if (item.quantity < 5) {
-      informationMessage +=
-        item.name +
-        ': ' +
-        (item.quantity > 0
-          ? '재고 부족 (' + item.quantity + '개 남음)'
-          : '품절') +
-        '\n';
-    }
-  });
+  products.forEach(
+    (product) => (informationMessage += StockInformation(product))
+  );
 
+  const stockInformationText = document.getElementById('stock-status');
   stockInformationText.textContent = informationMessage;
-}
+};
 
 main();
+
+function StockInformation({ name, quantity }) {
+  if (quantity >= 5) {
+    return '';
+  }
+
+  if (quantity > 0) {
+    return `${name}: 재고 부족 (${quantity}개 남음) `;
+  }
+
+  return `${name}: 품절 `;
+}
 
 function CartItem({ id, name, price, quantity }) {
   const item = document.createElement('div');
@@ -259,6 +265,10 @@ const handleAddCart = () => {
   }
 
   if (selectedProduct.quantity > 0 && !hasCartProductById(selectedProductId)) {
+    const newTotal = calculateCartTotal([
+      ...cartProducts,
+      { ...selectedProduct, quantity: 1 },
+    ]);
     store.setState({
       products: products.map((product) =>
         product.id === selectedProductId
@@ -267,12 +277,18 @@ const handleAddCart = () => {
       ),
       cartProducts: [...cartProducts, { ...selectedProduct, quantity: 1 }],
       lastSelectedProduct: selectedProductId,
+      ...newTotal,
     });
-
-    calculateCartTotal();
     return;
   }
 
+  const newTotal = calculateCartTotal([
+    ...cartProducts.map((product) =>
+      product.id === selectedProductId
+        ? { ...product, quantity: product.quantity + 1 }
+        : product
+    ),
+  ]);
   store.setState({
     products: products.map((product) =>
       product.id === selectedProductId
@@ -285,13 +301,15 @@ const handleAddCart = () => {
         : product
     ),
     lastSelectedProduct: selectedProductId,
+    ...newTotal,
   });
-
-  calculateCartTotal();
 };
 
 const deleteCartItem = (targetProduct) => {
   const { products, cartProducts } = store.getState();
+  const newTotal = calculateCartTotal(
+    cartProducts.filter((product) => product.id !== targetProduct.id)
+  );
   store.setState({
     products: products.map((product) =>
       product.id === targetProduct.id
@@ -301,8 +319,8 @@ const deleteCartItem = (targetProduct) => {
     cartProducts: cartProducts.filter(
       (product) => product.id !== targetProduct.id
     ),
+    ...newTotal,
   });
-  calculateCartTotal();
 };
 
 const addCart = (targetProduct, quantityChange) => {
@@ -313,6 +331,13 @@ const addCart = (targetProduct, quantityChange) => {
     return;
   }
 
+  const newTotal = calculateCartTotal([
+    ...cartProducts.map((product) =>
+      product.id === targetProduct.id
+        ? { ...product, quantity: product.quantity + quantityChange }
+        : product
+    ),
+  ]);
   store.setState({
     products: products.map((product) =>
       product.id === targetProduct.id
@@ -324,8 +349,8 @@ const addCart = (targetProduct, quantityChange) => {
         ? { ...product, quantity: product.quantity + quantityChange }
         : product
     ),
+    ...newTotal,
   });
-  calculateCartTotal();
 };
 
 addButton.addEventListener('click', handleAddCart);

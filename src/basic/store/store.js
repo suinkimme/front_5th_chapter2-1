@@ -30,8 +30,11 @@ export const store = createStore({
     { id: 'p5', name: '상품5', price: 25000, quantity: 10 },
   ],
   cartProducts: [],
+  totalQuantity: 0,
+  totalAmountBeforeDiscount: 0,
   totalAmount: 0,
   cartProductsCount: 0,
   bonusPoints: 0,
   lastSelectedProductId: null,
+  discountRate: 0,
 });
