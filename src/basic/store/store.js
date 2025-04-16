@@ -6,7 +6,7 @@ const createObserver = () => {
   return { subscribe, notify };
 };
 
-export const createStore = (initialState) => {
+const createStore = (initialState) => {
   const { subscribe, notify } = createObserver();
 
   let state = { ...initialState };
@@ -20,3 +20,11 @@ export const createStore = (initialState) => {
 
   return { getState, setState, subscribe };
 };
+
+export const store = createStore({
+  products: [],
+  cartProducts: [],
+  totalAmount: 0,
+  cartProductsCount: 0,
+  bonusPoints: 0,
+});
