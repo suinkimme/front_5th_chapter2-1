@@ -122,10 +122,10 @@ function calculateCartTotal() {
         cartProducts[i].querySelector('span').textContent.split('x ')[1]
       );
 
-      var itemTotal = currentProduct.val * q;
+      var itemTotal = currentProduct.val * quantity;
       var discount = 0;
 
-      cartProductsCount += q;
+      cartProductsCount += quantity;
       subTotal += itemTotal;
 
       if (quantity >= 10) {
@@ -247,7 +247,7 @@ addButton.addEventListener('click', function () {
       selectedProduct.q--;
     }
 
-    calcCart();
+    calculateCartTotal();
     lastSelectedProduct = selectedProduct;
   }
 });
