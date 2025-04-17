@@ -69,7 +69,7 @@ const App = () => {
           text="추가"
           handleClick={() => handleIncreaseCartItem(selectedProductId)}
         />
-        <StockInformation />
+        <StockInformation products={products} />
       </div>
     </div>
   );
