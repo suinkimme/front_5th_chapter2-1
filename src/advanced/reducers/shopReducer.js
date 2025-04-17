@@ -1,3 +1,9 @@
+export const actions = {
+  INCREASE_CART_ITEM: 'INCREASE_CART_ITEM',
+  DECREASE_CART_ITEM: 'DECREASE_CART_ITEM',
+  REMOVE_CART_ITEM: 'REMOVE_CART_ITEM',
+};
+
 export const initialState = {
   products: [
     { id: 'p1', name: '상품1', price: 10000, quantity: 50 },
@@ -11,7 +17,7 @@ export const initialState = {
 
 export const shopReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_TO_CART': {
+    case actions.INCREASE_CART_ITEM: {
       const updatedProducts = state.products.map((product) => {
         if (product.id === action.payload.id && product.quantity > 0) {
           return { ...product, quantity: product.quantity - 1 };
@@ -19,7 +25,7 @@ export const shopReducer = (state, action) => {
         return product;
       });
 
-      const existing = state.cart.fidn(
+      const existing = state.cart.find(
         (product) => product.id === action.payload.id
       );
       let updatedCart;
@@ -41,7 +47,7 @@ export const shopReducer = (state, action) => {
       return { ...state, products: updatedProducts, cart: updatedCart };
     }
 
-    case 'REMOVE_FROM_CART': {
+    case actions.DECREASE_CART_ITEM: {
       const updatedCart = state.cart
         .map((product) => {
           if (product.id === action.payload.id) {
@@ -54,6 +60,32 @@ export const shopReducer = (state, action) => {
       const updatedProducts = state.products.map((product) => {
         if (product.id === action.payload.id) {
           return { ...product, quantity: product.quantity + 1 };
+        }
+        return product;
+      });
+
+      return {
+        ...state,
+        products: updatedProducts,
+        cart: updatedCart,
+      };
+    }
+
+    case actions.REMOVE_CART_ITEM: {
+      const existing = state.cart.find(
+        (product) => product.id === action.payload.id
+      );
+
+      if (!existing) return state;
+
+      const updatedCart = state.cart.filter(
+        (product) => product.id !== action.payload.id
+      );
+
+      // 장바구니에서 제거된 상품의 수량만큼 재고를 증가시킨다.
+      const updatedProducts = state.products.map((product) => {
+        if (product.id === action.payload.id) {
+          return { ...product, quantity: product.quantity + existing.quantity };
         }
         return product;
       });

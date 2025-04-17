@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const CartInventory = () => {
-  return <div id="cart-items"></div>;
-};
+// components
+import { CartItem } from '.';
+
+const CartInventory = memo(
+  ({
+    cart,
+    handleIncreaseCartItem,
+    handleDecreaseCartItem,
+    handleRemoveCartItem,
+  }) => {
+    return (
+      <div id="cart-items">
+        {cart.map((product) => (
+          <CartItem
+            key={product.id}
+            {...product}
+            handleIncreaseCartItem={handleIncreaseCartItem}
+            handleDecreaseCartItem={handleDecreaseCartItem}
+            handleRemoveCartItem={handleRemoveCartItem}
+          />
+        ))}
+      </div>
+    );
+  }
+);
 
 export default CartInventory;
