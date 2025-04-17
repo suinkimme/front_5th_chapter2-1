@@ -17,7 +17,8 @@ import { useShopReducer } from './hooks/useShopReducer';
 import { actions } from './reducers/shopReducer';
 
 const App = () => {
-  const { products, cart, dispatch } = useShopReducer();
+  const { products, cart, totalAmount, discountRate, bonusPoints, dispatch } =
+    useShopReducer();
 
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
 
@@ -60,7 +61,11 @@ const App = () => {
           handleDecreaseCartItem={handleDecreaseCartItem}
           handleRemoveCartItem={handleRemoveCartItem}
         />
-        <CartTotalSummary />
+        <CartTotalSummary
+          totalAmount={totalAmount}
+          discountRate={discountRate}
+          bonusPoints={bonusPoints}
+        />
         <ProductSelectBox
           products={products}
           handleChange={setSelectedProductId}

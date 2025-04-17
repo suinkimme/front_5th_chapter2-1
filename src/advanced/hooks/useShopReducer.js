@@ -7,6 +7,11 @@ export const useShopReducer = () => {
   return {
     products: state.products,
     cart: state.cart,
+    totalQuantity: state.totalQuantity,
+    totalAmountBeforeDiscount: state.totalAmountBeforeDiscount,
+    totalAmount: state.totalAmount,
+    discountRate: state.discountRate,
+    bonusPoints: state.bonusPoints,
     dispatch,
   };
 };

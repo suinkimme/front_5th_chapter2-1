@@ -1,3 +1,5 @@
+import { getDiscountRate, getDiscountTotal } from '../utils';
+
 export const actions = {
   INCREASE_CART_ITEM: 'INCREASE_CART_ITEM',
   DECREASE_CART_ITEM: 'DECREASE_CART_ITEM',
@@ -13,6 +15,48 @@ export const initialState = {
     { id: 'p5', name: '상품5', price: 25000, quantity: 10 },
   ],
   cart: [],
+  totalQuantity: 0,
+  totalAmountBeforeDiscount: 0,
+  totalAmount: 0,
+  discountRate: 0,
+  bonusPoints: 0,
+};
+
+const calculateCartTotal = (cartProducts) => {
+  let totalQuantity = 0;
+  let totalAmountBeforeDiscount = 0;
+  let totalAmount = 0;
+
+  cartProducts.forEach((product) => {
+    const quantity = product.quantity;
+    const totalAmountItem = product.price * quantity;
+
+    totalQuantity += quantity;
+    totalAmountBeforeDiscount += totalAmountItem;
+
+    if (quantity < 10) {
+      totalAmount += totalAmountItem;
+      return;
+    }
+
+    totalAmount += totalAmountItem * (1 - getDiscountRate(product.id));
+  });
+
+  const { discountRate, discountedPrice } = getDiscountTotal(
+    totalQuantity,
+    totalAmount,
+    totalAmountBeforeDiscount
+  );
+
+  const bonusPoints = Math.floor(discountedPrice / 1000);
+
+  return {
+    totalQuantity,
+    totalAmountBeforeDiscount,
+    totalAmount: discountedPrice,
+    discountRate,
+    bonusPoints,
+  };
 };
 
 export const shopReducer = (state, action) => {
@@ -44,7 +88,12 @@ export const shopReducer = (state, action) => {
         updatedCart = [...state.cart, { ...product, quantity: 1 }];
       }
 
-      return { ...state, products: updatedProducts, cart: updatedCart };
+      return {
+        ...state,
+        products: updatedProducts,
+        cart: updatedCart,
+        ...calculateCartTotal(updatedCart),
+      };
     }
 
     case actions.DECREASE_CART_ITEM: {
@@ -68,6 +117,7 @@ export const shopReducer = (state, action) => {
         ...state,
         products: updatedProducts,
         cart: updatedCart,
+        ...calculateCartTotal(updatedCart),
       };
     }
 
@@ -82,7 +132,6 @@ export const shopReducer = (state, action) => {
         (product) => product.id !== action.payload.id
       );
 
-      // 장바구니에서 제거된 상품의 수량만큼 재고를 증가시킨다.
       const updatedProducts = state.products.map((product) => {
         if (product.id === action.payload.id) {
           return { ...product, quantity: product.quantity + existing.quantity };
@@ -94,6 +143,7 @@ export const shopReducer = (state, action) => {
         ...state,
         products: updatedProducts,
         cart: updatedCart,
+        ...calculateCartTotal(updatedCart),
       };
     }
 

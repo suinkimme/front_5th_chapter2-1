@@ -1,12 +1,17 @@
 import React from 'react';
 
-const CartTotalSummary = () => {
+const CartTotalSummary = ({ totalAmount, discountRate, bonusPoints }) => {
   return (
     <div id="cart-total" className="text-xl font-bold my-4">
-      총액: 0원
+      총액: {totalAmount}원
       <span id="loyalty-points" className="text-blue-500 ml-2">
-        (포인트: 0)
+        (포인트: {bonusPoints})
       </span>
+      {discountRate > 0 && (
+        <span className="text-green-500 ml-2">
+          ({discountRate * 100}% 할인 적용)
+        </span>
+      )}
     </div>
   );
 };
