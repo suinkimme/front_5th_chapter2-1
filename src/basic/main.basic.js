@@ -4,34 +4,7 @@ import { store } from './store';
 // utils
 import { getDiscountRate, getDiscountTotal } from './utils';
 
-const renderCartProductList = (updatedCartProducts) => {
-  const cartProductList = document.getElementById('cart-items');
-  const cartProductListChildren = Array.from(cartProductList.children);
-
-  const productRemoveCart = cartProductListChildren.filter(
-    (child) => !updatedCartProducts.some((product) => product.id === child.id)
-  );
-
-  for (const product of productRemoveCart) {
-    cartProductList.removeChild(product);
-  }
-
-  for (const product of updatedCartProducts) {
-    const productIndex = cartProductListChildren.findIndex(
-      (child) => child.id === product.id
-    );
-
-    if (productIndex === -1) {
-      cartProductList.appendChild(CartItem(product));
-      return;
-    }
-
-    cartProductListChildren[productIndex].querySelector('span').textContent =
-      `${product.name} - ${product.price}원 x ${product.quantity}`;
-  }
-};
-
-function main() {
+const main = () => {
   const $root = document.getElementById('app');
 
   const $container = document.createElement('div');
@@ -78,10 +51,17 @@ function main() {
     setInterval(() => {
       const { products } = store.getState();
       const luckyItem = products[Math.floor(Math.random() * products.length)];
-      if (Math.random() < 0.3 && luckyItem.quantity > 0) {
-        luckyItem.price = Math.round(luckyItem.price * 0.8);
 
-        alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
+      if (Math.random() < 0.3 && luckyItem.quantity > 0) {
+        const discountedPrice = Math.round(luckyItem.price * 0.8);
+        const updatedProducts = products.map((product) =>
+          product.id === luckyItem.id
+            ? { ...product, price: discountedPrice }
+            : product
+        );
+
+        store.setState({ products: updatedProducts });
+        alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
         renderProductSelectOptions();
       }
     }, 30000);
@@ -92,8 +72,8 @@ function main() {
       const { products, lastSelectedProductId } = store.getState();
       if (!lastSelectedProductId) return;
 
-      const suggest = products.find((item) => {
-        return item.id !== lastSelectedProductId && item.quantity > 0;
+      const suggest = products.find((product) => {
+        return product.id !== lastSelectedProductId && product.quantity > 0;
       });
 
       if (!suggest) {
@@ -108,7 +88,8 @@ function main() {
 
   store.subscribe(render);
   render();
-}
+  renderProductSelectOptions();
+};
 
 const calculateCartTotal = (cartProducts) => {
   let totalQuantity = 0;
@@ -156,18 +137,41 @@ const render = () => {
   renderBonusPoints(bonusPoints);
   renderDiscountRate(discountRate);
   renderStockInformationText();
-  renderProductSelectOptions();
+};
+
+const renderCartProductList = (updatedCartProducts) => {
+  const cartProductList = document.getElementById('cart-items');
+  const cartProductListChildren = Array.from(cartProductList.children);
+
+  const productRemoveCart = cartProductListChildren.filter(
+    (child) => !updatedCartProducts.some((product) => product.id === child.id)
+  );
+
+  for (const product of productRemoveCart) {
+    cartProductList.removeChild(product);
+  }
+
+  for (const product of updatedCartProducts) {
+    const productIndex = cartProductListChildren.findIndex(
+      (child) => child.id === product.id
+    );
+
+    if (productIndex === -1) {
+      cartProductList.appendChild(CartItem(product));
+      return;
+    }
+
+    cartProductListChildren[productIndex].querySelector('span').textContent =
+      `${product.name} - ${product.price}원 x ${product.quantity}`;
+  }
 };
 
 const renderProductSelectOptions = () => {
   const { products } = store.getState();
   const productSelectBox = document.getElementById('product-select');
   productSelectBox.innerHTML = '';
-  products.forEach((item) => {
-    const option = document.createElement('option');
-    option.value = item.id;
-    option.textContent = item.name + ' - ' + item.price + '원';
-    if (item.quantity === 0) option.disabled = true;
+  products.forEach((product) => {
+    const option = ProductSelectOption(product);
     productSelectBox.appendChild(option);
   });
 };
@@ -352,6 +356,16 @@ const cartProductList = document.getElementById('cart-items');
 cartProductList.addEventListener('click', handleCartItemClick);
 
 // components
+function ProductSelectOption({ id, name, price, quantity }) {
+  const selectOption = document.createElement('option');
+  selectOption.value = id;
+  selectOption.textContent = `${name} - ${price}원`;
+
+  if (quantity === 0) selectOption.disabled = true;
+
+  return selectOption;
+}
+
 function StockInformation({ name, quantity }) {
   if (quantity >= 5) {
     return '';
