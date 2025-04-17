@@ -4,7 +4,7 @@ import { store } from './store';
 // utils
 import { getDiscountRate, getDiscountTotal } from './utils';
 
-const main = () => {
+export const main = () => {
   const $root = document.getElementById('app');
 
   const $container = document.createElement('div');
