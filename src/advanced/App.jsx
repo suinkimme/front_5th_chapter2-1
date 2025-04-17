@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // components
 import {
@@ -18,6 +18,8 @@ import { actions } from './reducers/shopReducer';
 
 const App = () => {
   const { products, cart, dispatch } = useShopReducer();
+
+  const [selectedProductId, setSelectedProductId] = useState(products[0].id);
 
   const handleIncreaseCartItem = (productId) => {
     dispatch({
@@ -53,8 +55,14 @@ const App = () => {
           handleRemoveCartItem={handleRemoveCartItem}
         />
         <CartTotalSummary />
-        <ProductSelectBox products={products} />
-        <Button text="추가" handleClick={() => handleIncreaseCartItem('p1')} />
+        <ProductSelectBox
+          products={products}
+          handleChange={setSelectedProductId}
+        />
+        <Button
+          text="추가"
+          handleClick={() => handleIncreaseCartItem(selectedProductId)}
+        />
         <StockInformation />
       </div>
     </div>
