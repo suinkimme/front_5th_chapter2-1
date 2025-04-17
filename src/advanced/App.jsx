@@ -22,6 +22,12 @@ const App = () => {
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
 
   const handleIncreaseCartItem = (productId) => {
+    const product = products.find((product) => product.id === productId);
+    if (product.quantity === 0) {
+      alert('재고가 없습니다.');
+      return;
+    }
+
     dispatch({
       type: actions.INCREASE_CART_ITEM,
       payload: {
