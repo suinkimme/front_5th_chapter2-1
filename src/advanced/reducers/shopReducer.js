@@ -1,5 +1,5 @@
-import { getDiscountRate, getDiscountTotal } from '../utils';
-
+import { getDiscountTotal } from '../utils';
+import { PRODUCT_DISCOUNT_RATE } from '../config';
 export const actions = {
   INCREASE_CART_ITEM: 'INCREASE_CART_ITEM',
   DECREASE_CART_ITEM: 'DECREASE_CART_ITEM',
@@ -41,7 +41,7 @@ const calculateCartTotal = (cartProducts) => {
       return;
     }
 
-    totalAmount += totalAmountItem * (1 - getDiscountRate(product.id));
+    totalAmount += totalAmountItem * (1 - PRODUCT_DISCOUNT_RATE[product.id]);
   });
 
   const { discountRate, discountedPrice } = getDiscountTotal(
