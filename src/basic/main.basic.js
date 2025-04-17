@@ -4,6 +4,9 @@ import { store } from './store';
 // utils
 import { getDiscountRate, getDiscountTotal } from './utils';
 
+// config
+import { PRODUCT_DISCOUNT_RATE } from './config';
+
 export const main = () => {
   const $root = document.getElementById('app');
 
@@ -108,7 +111,7 @@ const calculateCartTotal = (cartProducts) => {
       return;
     }
 
-    totalAmount += totalAmountItem * (1 - getDiscountRate(product.id));
+    totalAmount += totalAmountItem * (1 - PRODUCT_DISCOUNT_RATE[product.id]);
   });
 
   const { discountRate, discountedPrice } = getDiscountTotal(
