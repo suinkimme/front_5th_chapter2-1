@@ -2,7 +2,7 @@
 import { store } from './store';
 
 // utils
-import { getDiscountRate, getDiscountTotal } from './utils';
+import { getDiscountTotal } from './utils';
 
 // config
 import { PRODUCT_DISCOUNT_RATE } from './config';

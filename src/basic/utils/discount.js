@@ -4,22 +4,6 @@ const DISCOUNT_RATE_INFO = {
   regular: 0.1,
   bulk: 0.25,
 };
-
-export const getDiscountRate = (productId) => {
-  switch (productId) {
-    case 'p1':
-      return 0.1;
-    case 'p2':
-      return 0.15;
-    case 'p3':
-      return 0.2;
-    case 'p4':
-      return 0.05;
-    case 'p5':
-      return 0.25;
-  }
-};
-
 export const isTuesday = () => {
   const today = new Date();
   return today.getDay() === 2;
