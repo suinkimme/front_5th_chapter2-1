@@ -4,6 +4,7 @@ export const actions = {
   INCREASE_CART_ITEM: 'INCREASE_CART_ITEM',
   DECREASE_CART_ITEM: 'DECREASE_CART_ITEM',
   REMOVE_CART_ITEM: 'REMOVE_CART_ITEM',
+  UPDATE_PRODUCT: 'UPDATE_PRODUCT',
 };
 
 export const initialState = {
@@ -15,6 +16,7 @@ export const initialState = {
     { id: 'p5', name: '상품5', price: 25000, quantity: 10 },
   ],
   cart: [],
+  lastSelectedProductId: null,
   totalQuantity: 0,
   totalAmountBeforeDiscount: 0,
   totalAmount: 0,
@@ -61,6 +63,21 @@ const calculateCartTotal = (cartProducts) => {
 
 export const shopReducer = (state, action) => {
   switch (action.type) {
+    case actions.UPDATE_PRODUCT: {
+      const updatedProducts = state.products.map((product) => {
+        if (product.id === action.payload.id) {
+          return { ...product, price: action.payload.price };
+        }
+        return product;
+      });
+
+      return {
+        ...state,
+        products: updatedProducts,
+        ...calculateCartTotal(state.cart),
+      };
+    }
+
     case actions.INCREASE_CART_ITEM: {
       const updatedProducts = state.products.map((product) => {
         if (product.id === action.payload.id && product.quantity > 0) {
@@ -92,6 +109,7 @@ export const shopReducer = (state, action) => {
         ...state,
         products: updatedProducts,
         cart: updatedCart,
+        lastSelectedProductId: action.payload.id,
         ...calculateCartTotal(updatedCart),
       };
     }

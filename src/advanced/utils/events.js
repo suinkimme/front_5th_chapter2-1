@@ -1,0 +1,31 @@
+// 번개 세일
+export const triggerFlashSale = (products, handleUpdateProducts) => {
+  const luckyItem = products[Math.floor(Math.random() * products.length)];
+
+  if (Math.random() < 0.3 && luckyItem.quantity > 0) {
+    const discountedPrice = Math.round(luckyItem.price * 0.8);
+    handleUpdateProducts(luckyItem.id, discountedPrice);
+
+    alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
+  }
+};
+
+// 추천 상품
+export const triggerRecommendProduct = (
+  products,
+  lastSelectedProductId,
+  handleUpdateProducts
+) => {
+  if (!lastSelectedProductId) return;
+
+  const suggest = products.find((product) => {
+    return product.id !== lastSelectedProductId && product.quantity > 0;
+  });
+
+  if (!suggest) {
+    return;
+  }
+
+  handleUpdateProducts(suggest.id, Math.round(suggest.price * 0.95));
+  alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
+};

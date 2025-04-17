@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // components
 import {
@@ -16,7 +16,15 @@ import { useShopReducer } from './hooks/useShopReducer';
 // constants
 import { actions } from './reducers/shopReducer';
 
+// utils
+import { triggerFlashSale, triggerRecommendProduct } from './utils';
+
 const App = () => {
+  const flashSaleTimeout = useRef(null);
+  const flashSaleInterval = useRef(null);
+  const recommendProductTimeout = useRef(null);
+  const recommendProductInterval = useRef(null);
+
   const { products, cart, totalAmount, discountRate, bonusPoints, dispatch } =
     useShopReducer();
 
@@ -50,6 +58,35 @@ const App = () => {
       payload: { id: productId },
     });
   };
+
+  useEffect(() => {
+    flashSaleTimeout.current = setTimeout(() => {
+      flashSaleInterval.current = setInterval(() => {
+        triggerFlashSale(products, (id, price) => {
+          dispatch({ type: actions.UPDATE_PRODUCT, payload: { id, price } });
+        });
+      }, 30000);
+    }, Math.random() * 10000);
+
+    recommendProductTimeout.current = setTimeout(() => {
+      recommendProductInterval.current = setInterval(() => {
+        triggerRecommendProduct(
+          products,
+          lastSelectedProductId,
+          (id, price) => {
+            dispatch({ type: actions.UPDATE_PRODUCT, payload: { id, price } });
+          }
+        );
+      }, 30000);
+    }, Math.random() * 10000);
+
+    return () => {
+      clearTimeout(flashSaleTimeout);
+      clearInterval(flashSaleInterval);
+      clearTimeout(recommendProductTimeout);
+      clearInterval(recommendProductInterval);
+    };
+  }, []);
 
   return (
     <div className="bg-gray-100 p-8">
