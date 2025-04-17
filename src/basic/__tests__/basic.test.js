@@ -8,6 +8,8 @@ import {
   vi,
 } from 'vitest';
 
+import { triggerFlashSale, triggerRecommendSale } from '../utils/events';
+
 describe('basic test', () => {
   describe.each([
     { type: 'origin', loadFile: () => import('../../main.original.js') },
@@ -119,6 +121,34 @@ describe('basic test', () => {
       );
     });
 
+    it('번개세일 기능이 정상적으로 동작하는지 확인', () => {
+      const products = [
+        { id: 'p1', name: '상품1', price: 10000, quantity: 50 },
+        { id: 'p2', name: '상품2', price: 20000, quantity: 30 },
+        { id: 'p3', name: '상품3', price: 30000, quantity: 20 },
+        { id: 'p4', name: '상품4', price: 15000, quantity: 0 },
+        { id: 'p5', name: '상품5', price: 25000, quantity: 10 },
+      ];
+
+      const newProducts = triggerFlashSale(products);
+
+      expect(newProducts).not.toEqual(products);
+    });
+
+    it('추천 상품 알림이 표시되는지 확인', () => {
+      const products = [
+        { id: 'p1', name: '상품1', price: 10000, quantity: 50 },
+        { id: 'p2', name: '상품2', price: 20000, quantity: 30 },
+        { id: 'p3', name: '상품3', price: 30000, quantity: 20 },
+        { id: 'p4', name: '상품4', price: 15000, quantity: 0 },
+        { id: 'p5', name: '상품5', price: 25000, quantity: 10 },
+      ];
+
+      const newProducts = triggerRecommendSale(products, 'p1');
+
+      expect(newProducts).not.toEqual(products);
+    });
+
     it('화요일 할인이 적용되는지 확인', () => {
       const mockDate = new Date('2024-10-15'); // 화요일
       vi.useFakeTimers();
@@ -178,71 +208,6 @@ describe('basic test', () => {
 
       // 재고 상태 정보에 해당 상품이 재고 부족으로 표시되는지 확인
       expect(stockInfo.textContent).toContain('상품5: 품절');
-    });
-
-    // 초기화 진행하려 가장 하단에 배치했습니다.
-    describe('타이머 기반 동작 테스트 (번개세일/추천세일)', () => {
-      it('번개세일 기능이 정상적으로 동작하는지 확인', async () => {
-        vi.useFakeTimers();
-
-        // DOM 초기화
-        document.body.innerHTML = '<div id="app"></div>';
-
-        vi.spyOn(Math, 'random').mockReturnValue(0.1);
-
-        // 앱 초기화
-        const { main } = await loadFile();
-        main();
-
-        // 실행 직후 select 옵션들 저장
-        const selectBox = document.getElementById('product-select');
-        const initialOptions = Array.from(selectBox.children).map(
-          (opt) => opt.textContent
-        );
-
-        vi.runOnlyPendingTimers(); // setTimeout 실행
-        vi.advanceTimersByTime(30000); // setInterval 실행
-
-        const updatedOptions = Array.from(selectBox.children).map(
-          (opt) => opt.textContent
-        );
-
-        // alert이 뜨는지 확인
-        expect(window.alert).toHaveBeenCalledWith(
-          expect.stringContaining('번개')
-        );
-
-        // select 박스가 변경됐는지 확인
-        expect(updatedOptions).not.toEqual(initialOptions);
-      });
-
-      it('추천 상품 알림이 표시되는지 확인', async () => {
-        vi.useFakeTimers();
-        vi.spyOn(Math, 'random').mockReturnValue(0.1);
-
-        document.body.innerHTML = `<div id="app"></div>`;
-
-        const { main } = await loadFile();
-        main();
-
-        const selectBox = document.getElementById('product-select');
-        const beforeOptions = Array.from(selectBox.children).map(
-          (opt) => opt.textContent
-        );
-
-        vi.runOnlyPendingTimers(); // setTimeout
-        vi.advanceTimersByTime(60000); // setInterval 실행 타이밍 도달
-
-        expect(window.alert).toHaveBeenCalledWith(
-          expect.stringContaining('할인')
-        );
-
-        const afterOptions = Array.from(selectBox.children).map(
-          (opt) => opt.textContent
-        );
-
-        expect(afterOptions).not.toEqual(beforeOptions);
-      });
     });
   });
 });

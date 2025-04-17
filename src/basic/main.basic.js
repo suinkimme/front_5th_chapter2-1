@@ -2,7 +2,11 @@
 import { store } from './store';
 
 // utils
-import { getDiscountTotal } from './utils';
+import {
+  getDiscountTotal,
+  triggerFlashSale,
+  triggerRecommendSale,
+} from './utils';
 
 // config
 import { PRODUCT_DISCOUNT_RATE } from './config';
@@ -53,18 +57,9 @@ export const main = () => {
   setTimeout(() => {
     setInterval(() => {
       const { products } = store.getState();
-      const luckyItem = products[Math.floor(Math.random() * products.length)];
-
-      if (Math.random() < 0.3 && luckyItem.quantity > 0) {
-        const discountedPrice = Math.round(luckyItem.price * 0.8);
-        const updatedProducts = products.map((product) =>
-          product.id === luckyItem.id
-            ? { ...product, price: discountedPrice }
-            : product
-        );
-
-        store.setState({ products: updatedProducts });
-        alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
+      const updatedCartProducts = triggerFlashSale(products);
+      if (updatedCartProducts) {
+        store.setState({ products: updatedCartProducts });
         renderProductSelectOptions();
       }
     }, 30000);
@@ -73,21 +68,16 @@ export const main = () => {
   setTimeout(() => {
     setInterval(() => {
       const { products, lastSelectedProductId } = store.getState();
-      if (!lastSelectedProductId) return;
-
-      const suggest = products.find((product) => {
-        return product.id !== lastSelectedProductId && product.quantity > 0;
-      });
-
-      if (!suggest) {
-        return;
+      const updatedCartProducts = triggerRecommendSale(
+        products,
+        lastSelectedProductId
+      );
+      if (updatedCartProducts) {
+        store.setState({ products: updatedCartProducts });
+        renderProductSelectOptions();
       }
-
-      alert(suggest.name + '은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!');
-      suggest.price = Math.round(suggest.price * 0.95);
-      renderProductSelectOptions();
-    }, 60000);
-  }, Math.random() * 20000);
+    }, 30000);
+  }, Math.random() * 10000);
 
   store.subscribe(render);
   render();
@@ -147,7 +137,7 @@ const renderCartProductList = (updatedCartProducts) => {
   const cartProductListChildren = Array.from(cartProductList.children);
 
   const productRemoveCart = cartProductListChildren.filter(
-    (child) => !updatedCartProducts.some((product) => product.id === child.id)
+    (child) => !updatedCartProducts.some((item) => item.id === child.id)
   );
 
   for (const product of productRemoveCart) {
