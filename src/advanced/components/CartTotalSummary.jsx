@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const CartTotalSummary = ({ totalAmount, discountRate, bonusPoints }) => {
+const CartTotalSummary = memo(({ totalAmount, discountRate, bonusPoints }) => {
   return (
     <div id="cart-total" className="text-xl font-bold my-4">
       총액: {totalAmount}원
@@ -14,6 +14,6 @@ const CartTotalSummary = ({ totalAmount, discountRate, bonusPoints }) => {
       )}
     </div>
   );
-};
+});
 
 export default CartTotalSummary;

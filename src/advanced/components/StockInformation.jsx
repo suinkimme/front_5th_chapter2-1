@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const StockItem = ({ name, quantity }) => {
+const StockItem = memo(({ name, quantity }) => {
   if (quantity >= 5) {
     return '';
   }
@@ -10,9 +10,9 @@ const StockItem = ({ name, quantity }) => {
   }
 
   return `${name}: 품절 `;
-};
+});
 
-const StockInformation = ({ products }) => {
+const StockInformation = memo(({ products }) => {
   return (
     <div id="stock-status" className="text-sm text-gray-500 mt-2">
       {products.map((product) => (
@@ -20,6 +20,6 @@ const StockInformation = ({ products }) => {
       ))}
     </div>
   );
-};
+});
 
 export default StockInformation;

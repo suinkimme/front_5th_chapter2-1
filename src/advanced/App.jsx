@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 // components
 import {
@@ -30,34 +30,43 @@ const App = () => {
 
   const [selectedProductId, setSelectedProductId] = useState(products[0].id);
 
-  const handleIncreaseCartItem = (productId) => {
-    const product = products.find((product) => product.id === productId);
-    if (product.quantity === 0) {
-      alert('재고가 없습니다.');
-      return;
-    }
+  const handleIncreaseCartItem = useCallback(
+    (productId) => {
+      const product = products.find((product) => product.id === productId);
+      if (product.quantity === 0) {
+        alert('재고가 없습니다.');
+        return;
+      }
 
-    dispatch({
-      type: actions.INCREASE_CART_ITEM,
-      payload: {
-        id: productId,
-      },
-    });
-  };
+      dispatch({
+        type: actions.INCREASE_CART_ITEM,
+        payload: {
+          id: productId,
+        },
+      });
+    },
+    [products, dispatch]
+  );
 
-  const handleDecreaseCartItem = (productId) => {
-    dispatch({
-      type: actions.DECREASE_CART_ITEM,
-      payload: { id: productId },
-    });
-  };
+  const handleDecreaseCartItem = useCallback(
+    (productId) => {
+      dispatch({
+        type: actions.DECREASE_CART_ITEM,
+        payload: { id: productId },
+      });
+    },
+    [dispatch]
+  );
 
-  const handleRemoveCartItem = (productId) => {
-    dispatch({
-      type: actions.REMOVE_CART_ITEM,
-      payload: { id: productId },
-    });
-  };
+  const handleRemoveCartItem = useCallback(
+    (productId) => {
+      dispatch({
+        type: actions.REMOVE_CART_ITEM,
+        payload: { id: productId },
+      });
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     flashSaleTimeout.current = setTimeout(() => {

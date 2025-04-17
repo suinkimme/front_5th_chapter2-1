@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const ProductSelectBox = ({ products, handleChange }) => {
+const ProductSelectBox = memo(({ products, handleChange }) => {
   return (
     <select
       id="product-select"
@@ -18,6 +18,6 @@ const ProductSelectBox = ({ products, handleChange }) => {
       ))}
     </select>
   );
-};
+});
 
 export default ProductSelectBox;

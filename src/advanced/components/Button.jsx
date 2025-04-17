@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const Button = ({ text, handleClick }) => {
+const Button = memo(({ text, handleClick }) => {
   return (
     <button
       id="add-to-cart"
@@ -10,6 +10,6 @@ const Button = ({ text, handleClick }) => {
       {text}
     </button>
   );
-};
+});
 
 export default Button;
