@@ -2,7 +2,7 @@ import React from 'react';
 
 const ProductSelectBox = () => {
   return (
-    <select id="product-select" class="border rounded p-2 mr-2">
+    <select id="product-select" className="border rounded p-2 mr-2">
       <option value="p1">상품1 - 10000원</option>
       <option value="p2">상품2 - 20000원</option>
       <option value="p3">상품3 - 30000원</option>
